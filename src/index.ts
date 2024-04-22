@@ -14,6 +14,7 @@ import express from "express";
 import http from "http";
 import cors from "cors";
 import dotenv from "dotenv";
+import jwt from 'jsonwebtoken';
 
 import { fileURLToPath } from "url";
 import { dirname } from "path";
@@ -25,7 +26,6 @@ const mergedTypeDefs = mergeTypeDefs([userTypeDef, transactionTypeDef]);
 const mergedResolvers = mergeResolvers([transactionResolver, userResolver]);
 
 dotenv.config();
-
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -33,6 +33,7 @@ const server = new ApolloServer({
   typeDefs: mergedTypeDefs,
   resolvers: mergedResolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  
 });
 
 await server.start();
