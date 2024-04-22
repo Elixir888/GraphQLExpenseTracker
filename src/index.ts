@@ -1,5 +1,4 @@
 import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
 import { mergeTypeDefs } from "@graphql-tools/merge";
 import { mergeResolvers } from "@graphql-tools/merge";
 
@@ -8,41 +7,44 @@ import transactionTypeDef from "./typeDefs/transaction.typeDef.js";
 import userResolver from "./resolvers/user.resolver.js";
 import transactionResolver from "./resolvers/transaction.resolver.js";
 
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import express from 'express';
+import http from 'http';
+import cors from 'cors';
 
-import bookResolver from "./resolvers/book.resolver.js";
 
 const mergedTypeDefs = mergeTypeDefs([userTypeDef, transactionTypeDef]);
 const mergedResolvers = mergeResolvers([ transactionResolver, userResolver ]);
 
-const typeDefs = `#graphql
+const app = express();
 
-  # This "Book" type defines the queryable fields for every book in our data source.
-  type Book {
-    title: String
-    author: String
-  }
-
-  # The "Query" type is special: it lists all of the available queries that
-  # clients can execute, along with the return type for each. In this
-  # case, the "books" query returns an array of zero or more Books (defined above).
-  type Query {
-    books: [Book]
-  }
-`;
+const httpServer = http.createServer(app);
 
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
     typeDefs: mergedTypeDefs,
     resolvers: mergedResolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
   
-  // Passing an ApolloServer instance to the `startStandaloneServer` function:
-  //  1. creates an Express app
-  //  2. installs your ApolloServer instance as middleware
-  //  3. prepares your app to handle incoming requests
-  const { url } = await startStandaloneServer(server, {
-    listen: { port: 4000 },
-  });
-  
-  console.log(`🚀  Server ready at PORT: ${url}`);
+// Ensure we wait for our server to start
+await server.start();
+
+// Set up our Express middleware to handle CORS, body parsing,
+// and our expressMiddleware function.
+app.use(
+  '/',
+  cors<cors.CorsRequest>(),
+  express.json(),
+  // expressMiddleware accepts the same arguments:
+  // an Apollo Server instance and optional configuration options
+  expressMiddleware(server, {
+    context: async ({ req }) => ({ req }),
+  }),
+);
+
+// Modified server startup
+await new Promise<void>((resolve) => httpServer.listen({ port: 4000 }, resolve));
+console.log(`🚀 Server ready at http://localhost:4000/`);
