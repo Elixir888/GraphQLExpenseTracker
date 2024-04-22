@@ -1,8 +1,8 @@
-import {users} from "../utils/data.js"
+import { users } from "../utils/data.js"
 
 const userResolver = {
     Query: {
-        users: () => {
+        getAllUsers: () => {
             return users
         }
     },
