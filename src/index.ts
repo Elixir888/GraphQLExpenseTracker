@@ -1,30 +1,18 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { mergeTypeDefs } from "@graphql-tools/merge";
+import { mergeResolvers } from "@graphql-tools/merge";
+
+import userTypeDef from "./typeDefs/user.typeDef.js";
+import transactionTypeDef from "./typeDefs/transaction.typeDef.js";
+import userResolver from "./resolvers/user.resolver.js";
+import transactionResolver from "./resolvers/transaction.resolver.js";
 
 
-import mergedResolvers from './resolvers';
-import mergedTypeDefs from './typeDefs';
-// A schema is a collection of type definitions (hence "typeDefs")
-// that together define the "shape" of queries that are executed against
-// your data.
-const books = [
-    {
-      title: 'The Awakening',
-      author: 'Kate Chopin',
-    },
-    {
-      title: 'City of Glass',
-      author: 'Paul Auster',
-    },
-  ];
+import bookResolver from "./resolvers/book.resolver.js";
 
-  // Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
-const resolvers = {
-    Query: {
-      books: () => books,
-    },
-  };
+const mergedTypeDefs = mergeTypeDefs([userTypeDef, transactionTypeDef]);
+const mergedResolvers = mergeResolvers([userResolver, transactionResolver]);
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -47,7 +35,7 @@ const typeDefs = `#graphql
 // definition and your set of resolvers.
 const server = new ApolloServer({
     typeDefs,
-    resolvers,
+    resolvers: bookResolver,
   });
   
   // Passing an ApolloServer instance to the `startStandaloneServer` function:

@@ -1,4 +1,4 @@
-import {transactions} from "../utils/data"
+import {transactions} from "../utils/data.js"
 
 const transactionResolver = {
     Query: {

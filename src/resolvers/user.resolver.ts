@@ -1,4 +1,4 @@
-import {users} from "../utils/data"
+import {users} from "../utils/data.js"
 
 const userResolver = {
     Query: {
