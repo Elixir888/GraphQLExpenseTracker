@@ -19,6 +19,7 @@ const userTypeDef = `#graphql
         signUp(input: SignUpInput!): User
         login(input: LoginInput!): User
         logout: LogoutResponse
+        createUniqueUser(input: UniqueUserInput!): User
     }
 
     input SignUpInput {
@@ -31,6 +32,13 @@ const userTypeDef = `#graphql
     input LoginInput {
         username: String!
         password: String!
+    }
+
+    input UniqueUserInput {
+        username: String!
+        name: String!
+        password: String!
+        gender: String!
     }
 
     type LogoutResponse {
