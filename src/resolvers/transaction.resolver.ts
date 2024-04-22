@@ -1,12 +1,12 @@
-import {transactions} from "../utils/data.js"
+import { transactions } from "../utils/data.js";
 
 const transactionResolver = {
     Query: {
-        users: () => {
-            return transactions
+        transactions: () => {
+            return transactions;
         }
     },
     Mutation: {}
-}
+};
 
-export default transactionResolver
+export default transactionResolver;

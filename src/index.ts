@@ -12,7 +12,7 @@ import transactionResolver from "./resolvers/transaction.resolver.js";
 import bookResolver from "./resolvers/book.resolver.js";
 
 const mergedTypeDefs = mergeTypeDefs([userTypeDef, transactionTypeDef]);
-const mergedResolvers = mergeResolvers([userResolver, transactionResolver]);
+const mergedResolvers = mergeResolvers([ transactionResolver]);
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -34,8 +34,8 @@ const typeDefs = `#graphql
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
-    typeDefs,
-    resolvers: bookResolver,
+    typeDefs: mergedTypeDefs,
+    resolvers: mergedResolvers,
   });
   
   // Passing an ApolloServer instance to the `startStandaloneServer` function:
