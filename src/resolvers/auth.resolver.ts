@@ -1,6 +1,6 @@
 const authResolver = {
     Query: {
-      // This resolver retrieves the currently authenticated user
+      
       authUser: async (_, __, { req, prisma }) => {
         try {
           const userId = req.session.userId;
